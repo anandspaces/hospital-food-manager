@@ -1,38 +1,24 @@
-# Stage 1: Build the React app using Vite
-FROM node:18 AS build
+# Stage 1: Build the React app
+FROM node:18 as build
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Install dependencies and build the app
 COPY frontend/package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy the source code
 COPY frontend/ ./
-
-# Build the React app
 RUN npm run build
 
-# Stage 2: Serve the built React app using Node.js
+# Stage 2: Serve the built React app
 FROM node:18
 
-# Set working directory
 WORKDIR /app
 
-# Copy built files from the build stage
-COPY --from=build /app/dist /app/dist
+# Install `serve` to serve the static files
+RUN npm install -g serve
 
-# Install Express to serve static files
-RUN npm install express
+# Copy the built files from the build stage
+COPY --from=build /app/dist /app
 
-# Create a simple server to serve the Vite static files
-COPY frontend/server.js /app/server.js
-
-# Expose the port the app will run on
 EXPOSE 3000
-
-# Run the Express server
-CMD ["node", "server.js"]
+CMD ["serve", "-s", "dist", "-l", "3000"]

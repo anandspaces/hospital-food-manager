@@ -7,6 +7,8 @@ services:
       - "3000:3000"  # Map port 3000 to the host machine
     networks:
       - app-network
+    depends_on:
+      - backend  # Ensure frontend waits for backend
 
   backend:
     build:
@@ -17,9 +19,9 @@ services:
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_USER=your-db-user
-      - DB_PASSWORD=your-db-password
-      - DB_NAME=your-db-name
+      - DB_USER=anand
+      - DB_PASSWORD=anand
+      - DB_NAME=hospital_food_manager
     depends_on:
       - postgres  # Make sure the backend starts after PostgreSQL is ready
     networks:
