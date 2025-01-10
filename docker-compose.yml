@@ -1,0 +1,41 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"  # Map port 3000 to the host machine
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:5000"  # Map port 5000 to the host machine
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=your-db-user
+      - DB_PASSWORD=your-db-password
+      - DB_NAME=your-db-name
+    depends_on:
+      - postgres  # Make sure the backend starts after PostgreSQL is ready
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: anand
+      POSTGRES_PASSWORD: anand
+      POSTGRES_DB: hospital_food_manager
+    ports:
+      - "5432:5432"  # Expose PostgreSQL port
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
